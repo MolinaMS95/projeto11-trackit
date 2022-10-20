@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import Forms from "../../components/Forms";
@@ -8,6 +8,7 @@ import { colors } from "../../constants/colors";
 import { urls } from "../../constants/urls";
 import { ThreeDots } from "react-loader-spinner";
 import Swal from "sweetalert2";
+import { UserContext } from "../../components/UserContext";
 
 export default function Login() {
   const [form, setForm] = useState({
@@ -16,23 +17,30 @@ export default function Login() {
   });
   const [disabled, setDisabled] = useState(false);
   const navigate = useNavigate();
+  const { setUser } = useContext(UserContext);
 
   function handleForm(event) {
     setForm({ ...form, [event.target.name]: event.target.value });
   }
 
-  function login(event){
+  function login(event) {
     event.preventDefault();
     setDisabled(true);
     axios
       .post(urls.login, form)
-      .then(() => navigate("/hoje"))
+      .then((response) => {
+        setUser(response.data);
+        navigate("/hoje");
+      })
       .catch((error) => {
         Swal.fire({
-          icon: 'error',
-          title: 'Oops...',
-          text: error.response.status===422 ? error.response.data.details[0] : error.response.data.message,
-          footer: `Error status ${error.response.status}`
+          icon: "error",
+          title: "Oops...",
+          text:
+            error.response.status === 422
+              ? error.response.data.details[0]
+              : error.response.data.message,
+          footer: `Error status ${error.response.status}`,
         });
         setDisabled(false);
       });
