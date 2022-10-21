@@ -9,20 +9,27 @@ export default function Weekdays(props) {
       <Day
         type="button"
         value="D"
+        onClick={() => handleDays(0)}
+        isSelected={days.includes(0)}
+        disabled={disabled}
+      />
+      <Day
+        type="button"
+        value="S"
         onClick={() => handleDays(1)}
         isSelected={days.includes(1)}
         disabled={disabled}
       />
       <Day
         type="button"
-        value="S"
+        value="T"
         onClick={() => handleDays(2)}
         isSelected={days.includes(2)}
         disabled={disabled}
       />
       <Day
         type="button"
-        value="T"
+        value="Q"
         onClick={() => handleDays(3)}
         isSelected={days.includes(3)}
         disabled={disabled}
@@ -36,7 +43,7 @@ export default function Weekdays(props) {
       />
       <Day
         type="button"
-        value="Q"
+        value="S"
         onClick={() => handleDays(5)}
         isSelected={days.includes(5)}
         disabled={disabled}
@@ -46,13 +53,6 @@ export default function Weekdays(props) {
         value="S"
         onClick={() => handleDays(6)}
         isSelected={days.includes(6)}
-        disabled={disabled}
-      />
-      <Day
-        type="button"
-        value="S"
-        onClick={() => handleDays(7)}
-        isSelected={days.includes(7)}
         disabled={disabled}
       />
     </div>

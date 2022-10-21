@@ -63,13 +63,13 @@ export default function Habits() {
           name="trash-outline"
         ></ion-icon>
         <div>
-          <Day isSelected={item.days.includes(1)}>D</Day>
-          <Day isSelected={item.days.includes(2)}>S</Day>
-          <Day isSelected={item.days.includes(3)}>T</Day>
+          <Day isSelected={item.days.includes(0)}>D</Day>
+          <Day isSelected={item.days.includes(1)}>S</Day>
+          <Day isSelected={item.days.includes(2)}>T</Day>
+          <Day isSelected={item.days.includes(3)}>Q</Day>
           <Day isSelected={item.days.includes(4)}>Q</Day>
-          <Day isSelected={item.days.includes(5)}>Q</Day>
+          <Day isSelected={item.days.includes(5)}>S</Day>
           <Day isSelected={item.days.includes(6)}>S</Day>
-          <Day isSelected={item.days.includes(7)}>S</Day>
         </div>
       </HabitContainer>
     );
