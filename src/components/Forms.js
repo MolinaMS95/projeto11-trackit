@@ -33,6 +33,8 @@ const Form = styled.form`
   button {
     height: 45px;
 
+    opacity: ${props => props.isDisabled && (0.7)};
+
     background: ${(props) => props.colors};
     border: none;
     border-radius: 5px;
