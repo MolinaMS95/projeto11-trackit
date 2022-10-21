@@ -26,7 +26,7 @@ export default function TaskCreator(props) {
     event.preventDefault();
     setDisabled(true);
     if (days.length === 0) {
-      alert("Você precisa escolher ao menos um dia");
+      Swal.fire("Você precisa escolher ao menos um dia");
       setDisabled(false);
       return;
     }
@@ -38,6 +38,8 @@ export default function TaskCreator(props) {
       )
       .then((response) => {
         setHabits([...habits, response.data]);
+        setName("");
+        setDays([]);
         setAddTask(false);
       })
       .catch((error) => {
@@ -124,15 +126,14 @@ const AddTaskForm = styled.form`
 `;
 
 const ButtonContainer = styled.div`
-  position: absolute;
-  right: 18px;
-  bottom: 18px;
-
   font-size: 16px;
   font-family: "Lexend Deca";
 
   display: flex;
   align-items: center;
+  justify-content: flex-end;
+
+  padding-top: 30px;
 
   button {
     width: 84px;

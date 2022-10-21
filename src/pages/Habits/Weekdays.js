@@ -60,13 +60,13 @@ export default function Weekdays(props) {
 }
 
 const Day = styled.input`
-  width: 30px;
-  height: 30px;
+  width: 30px !important;
+  height: 30px !important;
   padding: 0px !important;
 
   background: ${(props) =>
     props.isSelected ? "#CFCFCF" : colors.white} !important;
-  color: ${(props) => (props.isSelected ? "white" : "gray")};
+  color: ${(props) => (props.isSelected ? "white" : "#DBDBDB")};
 
   cursor: pointer;
 `;

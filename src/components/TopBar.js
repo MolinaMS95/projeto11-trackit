@@ -30,6 +30,7 @@ const NavBar = styled.nav`
   position: fixed;
   left: 0px;
   top: 0px;
+  z-index: 2;
 
   h1 {
     font-family: "Playball", cursive;

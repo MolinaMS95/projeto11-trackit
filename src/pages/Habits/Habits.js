@@ -12,13 +12,13 @@ import TaskCreator from "./TaskCreator";
 export default function Habits() {
   const [addTask, setAddTask] = useState(false);
   const [habits, setHabits] = useState([]);
-  const [name, setName] = useState('');
+  const [name, setName] = useState("");
   const [days, setDays] = useState([]);
   const { user } = useContext(UserContext);
 
   useEffect(() => {
     axios
-      .get(urls.habits, { headers: { "Authorization": `Bearer ${user.token}` } })
+      .get(urls.habits, { headers: { Authorization: `Bearer ${user.token}` } })
       .then((response) => setHabits(response.data))
       .catch((error) =>
         Swal.fire({
@@ -28,7 +28,52 @@ export default function Habits() {
           footer: `Error status ${error.response.status}`,
         })
       );
-  }, [user.token]);
+  }, [user.token, habits]);
+
+  function deleteHabit(id) {
+    Swal.fire({
+      title: "Você tem certeza?",
+      text: "Não será possível reverter isso!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios
+          .delete(`${urls.habits}/${id}`, {
+            headers: { Authorization: `Bearer ${user.token}` },
+          })
+          .then(() => {
+            Swal.fire("Deleted!", "Your file has been deleted.", "success");
+            setHabits([]);
+          })
+          .catch((error) => alert(error.response.data.message));
+      }
+    });
+  }
+
+  function Habit({ item }) {
+    return (
+      <HabitContainer>
+        <p>{item.name}</p>
+        <ion-icon
+          onClick={() => deleteHabit(item.id)}
+          name="trash-outline"
+        ></ion-icon>
+        <div>
+          <Day isSelected={item.days.includes(1)}>D</Day>
+          <Day isSelected={item.days.includes(2)}>S</Day>
+          <Day isSelected={item.days.includes(3)}>T</Day>
+          <Day isSelected={item.days.includes(4)}>Q</Day>
+          <Day isSelected={item.days.includes(5)}>Q</Day>
+          <Day isSelected={item.days.includes(6)}>S</Day>
+          <Day isSelected={item.days.includes(7)}>S</Day>
+        </div>
+      </HabitContainer>
+    );
+  }
 
   return (
     <>
@@ -38,14 +83,25 @@ export default function Habits() {
           <p>Meus hábitos</p>
           <button onClick={() => setAddTask(true)}>+</button>
         </header>
-        {addTask && (<TaskCreator setAddTask={setAddTask} name={name} setName={setName} days={days} setDays={setDays} habits={habits} setHabits={setHabits}/>)}
+        {addTask && (
+          <TaskCreator
+            setAddTask={setAddTask}
+            name={name}
+            setName={setName}
+            days={days}
+            setDays={setDays}
+            habits={habits}
+            setHabits={setHabits}
+          />
+        )}
         {habits.length === 0 ? (
           <div>
             Você não tem nenhum hábito cadastrado ainda. Adicione um hábito para
             começar a trackear!
           </div>
-        ):
-        (<div>tem hábito</div>)}
+        ) : (
+          habits.map((item) => <Habit key={item.id} item={item} />)
+        )}
       </Body>
       <BottomBar />
     </>
@@ -56,7 +112,7 @@ const Body = styled.main`
   background: ${colors.background};
 
   height: calc(100vh - 140px);
-  margin: 70px 0px;
+  margin: 70px 0px 95px 0px;
   padding: 0px 17px;
 
   font-family: "Lexend Deca", sans-serif;
@@ -64,6 +120,8 @@ const Body = styled.main`
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  overflow-y: auto;
 
   header {
     display: flex;
@@ -74,7 +132,7 @@ const Body = styled.main`
     font-size: 23px;
 
     padding: 28px 0px;
-    
+
     width: 100%;
 
     button {
@@ -97,4 +155,48 @@ const Body = styled.main`
     font-size: 18px;
     color: ${colors.text};
   }
+`;
+
+const HabitContainer = styled.div`
+  width: 340px;
+  height: 91px;
+
+  background: ${colors.white};
+  border-radius: 5px;
+
+  margin-bottom: 10px;
+  padding: 15px;
+
+  position: relative;
+
+  div {
+    display: flex;
+    gap: 5px;
+
+    margin-top: 8px;
+  }
+
+  ion-icon {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+
+    cursor: pointer;
+  }
+`;
+
+const Day = styled.span`
+  width: 30px;
+  height: 30px;
+
+  background: ${(props) =>
+    props.isSelected ? "#CFCFCF" : colors.white} !important;
+  color: ${(props) => (props.isSelected ? "white" : "#DBDBDB")};
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid #d5d5d5;
+  border-radius: 5px;
 `;
