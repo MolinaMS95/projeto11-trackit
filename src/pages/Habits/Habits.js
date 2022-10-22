@@ -28,7 +28,7 @@ export default function Habits() {
           footer: `Error status ${error.response.status}`,
         })
       );
-  }, [user.token, habits]);
+  }, [user.token]);
 
   function deleteHabit(id) {
     Swal.fire({
@@ -47,7 +47,11 @@ export default function Habits() {
           })
           .then(() => {
             Swal.fire("Deleted!", "Your file has been deleted.", "success");
-            setHabits([]);
+            axios
+              .get(urls.habits, {
+                headers: { Authorization: `Bearer ${user.token}` },
+              })
+              .then((response) => setHabits(response.data));
           })
           .catch((error) => alert(error.response.data.message));
       }
@@ -112,8 +116,8 @@ const Body = styled.main`
   background: ${colors.background};
 
   height: calc(100vh - 140px);
-  margin: 70px 0px 95px 0px;
-  padding: 0px 17px;
+  margin: 70px 0px;
+  padding: 0px 17px 50px 17px;
 
   font-family: "Lexend Deca", sans-serif;
 

@@ -3,43 +3,30 @@ import BottomBar from "../../components/BottomBar";
 import TopBar from "../../components/TopBar";
 import { colors } from "../../constants/colors";
 import dayjs from "dayjs";
-import { useContext, useEffect, useState } from "react";
+import "dayjs/locale/pt-br";
+import { Profiler, useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { urls } from "../../constants/urls";
 import Swal from "sweetalert2";
 import { UserContext } from "../../components/UserContext";
+import TodayHabit from "./TodayHabit";
+import { ProgressContext } from "../../components/ProgressContext";
 
 export default function Today() {
   const [habits, setHabits] = useState([]);
   const { user } = useContext(UserContext);
+  const { progress, setProgress } = useContext(ProgressContext);
+  let done = 0;
 
-  function currentDay() {
-    const day = dayjs().day();
-    switch (day) {
-      case 0:
-        return "Domingo";
-      case 1:
-        return "Segunda";
-      case 2:
-        return "Terça";
-      case 3:
-        return "Quarta";
-      case 4:
-        return "Quinta";
-      case 5:
-        return "Sexta";
-      case 6:
-        return "Sábado";
-      default:
-        return;
-    }
-  }
-  const text = currentDay();
+  const day = dayjs().locale("pt-br").format("dddd, DD/MM");
+  const text = day.charAt(0).toUpperCase() + day.slice(1);
 
   useEffect(() => {
     axios
       .get(urls.today, { headers: { Authorization: `Bearer ${user.token}` } })
-      .then((response) => setHabits(response.data))
+      .then((response) => {
+        setHabits(response.data);
+      })
       .catch((error) =>
         Swal.fire({
           icon: "error",
@@ -48,86 +35,92 @@ export default function Today() {
           footer: `Error status ${error.response.status}`,
         })
       );
-  }, [user.token, habits]);
+  }, [user.token]);
 
-  function checkHabit(id, done) {
-    if (done === false) {
-      axios
-        .post(
-          `${urls.habits}/${id}/check`,
-          { id },
-          {
+  habits.forEach((item) => item.done === true && done++);
+  setProgress((done / habits.length) * 100);
+  
+  function checkHabit(id) {
+    axios
+      .post(
+        `${urls.habits}/${id}/check`,
+        { id },
+        {
+          headers: { Authorization: `Bearer ${user.token}` },
+        }
+      )
+      .then(() => {
+        axios
+          .get(urls.today, {
             headers: { Authorization: `Bearer ${user.token}` },
-          }
-        )
-        .catch((error) =>
-          Swal.fire({
-            icon: "error",
-            title: "Oops...",
-            text: error.response.data.message,
-            footer: `Error status ${error.response.status}`,
           })
-        );
-    } else {
-      axios
-        .post(
-          `${urls.habits}/${id}/uncheck`,
-          { id },
-          {
+          .then((response) => {
+            setHabits(response.data);
+            habits.forEach((item) => item.done === true && done++);
+            setProgress((done / response.data.length) * 100);
+          });
+      })
+      .catch((error) =>
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: error.response.data.message,
+          footer: `Error status ${error.response.status}`,
+        })
+      );
+  }
+
+  function uncheckHabit(id) {
+    axios
+      .post(
+        `${urls.habits}/${id}/uncheck`,
+        { id },
+        {
+          headers: { Authorization: `Bearer ${user.token}` },
+        }
+      )
+      .then(() => {
+        axios
+          .get(urls.today, {
             headers: { Authorization: `Bearer ${user.token}` },
-          }
-        )
-        .catch((error) =>
-          Swal.fire({
-            icon: "error",
-            title: "Oops...",
-            text: error.response.data.message,
-            footer: `Error status ${error.response.status}`,
           })
-        );
-    }
+          .then((response) => {
+            setHabits(response.data);
+            habits.forEach((item) => item.done === true && done++);
+            setProgress((done / response.data.length) * 100);
+          });
+      })
+      .catch((error) =>
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: error.response.data.message,
+          footer: `Error status ${error.response.status}`,
+        })
+      );
   }
 
   return (
     <>
       <TopBar />
-      <Body>
+      <Body progress={progress === null || progress === 0 || isNaN(progress)}>
         <header>
-          <p>
-            {text}, {dayjs().date()}/{dayjs().month() + 1}
-          </p>
-          <span>Nenhum hábito concluído ainda</span>
+          <p>{text}</p>
+          {progress === null || progress === 0 || isNaN(progress) ? (
+            <span>Nenhum hábito concluído ainda</span>
+          ) : (
+            <span>{progress.toFixed(0)}% dos hábitos concluídos</span>
+          )}
         </header>
         <ul>
-          {habits.map((item) => {
-            return (
-              <Habit key={item.id}>
-                <div>
-                  <span>{item.name}</span>
-                  <p>
-                    Sequência atual:{" "}
-                    <Sequence completed={item.done}>
-                      {item.currentSequence} dias
-                    </Sequence>
-                  </p>
-                  <p>
-                    Seu recorde:{" "}
-                    <Record
-                      record={(item.currentSequence === item.highestSequence) && (item.highestSequence !== 0)}
-                    >
-                      {item.highestSequence} dias
-                    </Record>
-                  </p>
-                </div>
-                <Checkmark
-                  completed={item.done}
-                  onClick={() => checkHabit(item.id, item.done)}
-                >
-                  <ion-icon name="checkmark-sharp"></ion-icon>
-                </Checkmark>
-              </Habit>
-            );
-          })}
+          {habits.map((item) => (
+            <TodayHabit
+              key={item.id}
+              item={item}
+              checkHabit={checkHabit}
+              uncheckHabit={uncheckHabit}
+            />
+          ))}
         </ul>
       </Body>
       <BottomBar />
@@ -140,13 +133,15 @@ const Body = styled.main`
 
   height: calc(100vh - 140px);
   margin: 70px 0px;
-  padding: 0px 17px;
+  padding: 0px 17px 50px 17px;
 
   font-family: "Lexend Deca", sans-serif;
 
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  overflow-y: auto;
 
   header {
     color: ${colors.darkblue};
@@ -157,66 +152,8 @@ const Body = styled.main`
     width: 100%;
 
     span {
-      color: ${colors.text};
+      color: ${(props) => (props.progress ? colors.text : "#8FC549")};
       font-size: 18px;
     }
   }
-`;
-
-const Habit = styled.li`
-  width: 340px;
-  height: 94px;
-
-  background: ${colors.white};
-  border-radius: 5px;
-
-  padding: 13px;
-  margin-bottom: 10px;
-
-  display: flex;
-  justify-content: space-between;
-
-  div {
-    height: 69px;
-
-    display: flex;
-    flex-direction: column;
-
-    color: ${colors.text};
-  }
-
-  span {
-    font-size: 20px;
-    margin-bottom: 10px;
-  }
-  
-  p{
-    font-size: 13px;
-  }
-`;
-
-const Checkmark = styled.div`
-  width: 69px;
-  height: 69px;
-
-  background: ${(props) => (props.completed ? "#8FC549" : "#ebebeb")};
-  border: 1px solid #e7e7e7;
-  border-radius: 5px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  font-size: 50px;
-  color: white !important;
-`;
-
-const Sequence = styled.span`
-  font-size: 13px !important;
-  color: ${(props) => (props.completed ? "#8FC549" : colors.text)};
-`;
-
-const Record = styled.span`
-  font-size: 13px !important;
-  color: ${(props) => (props.record ? "#8FC549" : colors.text)};
 `;

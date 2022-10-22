@@ -1,3 +1,4 @@
+import { useContext } from "react";
 import {
   buildStyles,
   CircularProgressbarWithChildren,
@@ -5,9 +6,10 @@ import {
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { colors } from "../constants/colors";
+import { ProgressContext } from "./ProgressContext";
 
 export default function BottomBar() {
-  const percentage = 50;
+  const { progress } = useContext(ProgressContext);
 
   return (
     <Footer>
@@ -15,7 +17,7 @@ export default function BottomBar() {
         <LetterButton>Hábitos</LetterButton>
       </Link>
       <TodayButton
-        value={percentage}
+        value={progress ? progress : 0}
         background
         backgroundPadding={6}
         styles={buildStyles({
