@@ -2,11 +2,12 @@ import styled from "styled-components";
 import { colors } from "../../constants/colors";
 
 export default function Weekdays(props) {
-    const {handleDays, days, disabled} = props;
+  const { handleDays, days, disabled } = props;
 
   return (
     <div>
       <Day
+        data-identifier="week-day-btn"
         type="button"
         value="D"
         onClick={() => handleDays(0)}
@@ -14,6 +15,7 @@ export default function Weekdays(props) {
         disabled={disabled}
       />
       <Day
+        data-identifier="week-day-btn"
         type="button"
         value="S"
         onClick={() => handleDays(1)}
@@ -21,6 +23,7 @@ export default function Weekdays(props) {
         disabled={disabled}
       />
       <Day
+        data-identifier="week-day-btn"
         type="button"
         value="T"
         onClick={() => handleDays(2)}
@@ -28,6 +31,7 @@ export default function Weekdays(props) {
         disabled={disabled}
       />
       <Day
+        data-identifier="week-day-btn"
         type="button"
         value="Q"
         onClick={() => handleDays(3)}
@@ -35,6 +39,7 @@ export default function Weekdays(props) {
         disabled={disabled}
       />
       <Day
+        data-identifier="week-day-btn"
         type="button"
         value="Q"
         onClick={() => handleDays(4)}
@@ -42,6 +47,7 @@ export default function Weekdays(props) {
         disabled={disabled}
       />
       <Day
+        data-identifier="week-day-btn"
         type="button"
         value="S"
         onClick={() => handleDays(5)}
@@ -49,6 +55,7 @@ export default function Weekdays(props) {
         disabled={disabled}
       />
       <Day
+        data-identifier="week-day-btn"
         type="button"
         value="S"
         onClick={() => handleDays(6)}

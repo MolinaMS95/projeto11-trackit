@@ -4,7 +4,7 @@ import TopBar from "../../components/TopBar";
 import { colors } from "../../constants/colors";
 import dayjs from "dayjs";
 import "dayjs/locale/pt-br";
-import { Profiler, useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { urls } from "../../constants/urls";
 import Swal from "sweetalert2";
@@ -16,7 +16,6 @@ export default function Today() {
   const [habits, setHabits] = useState([]);
   const { user } = useContext(UserContext);
   const { progress, setProgress } = useContext(ProgressContext);
-  let done = 0;
 
   const day = dayjs().locale("pt-br").format("dddd, DD/MM");
   const text = day.charAt(0).toUpperCase() + day.slice(1);
@@ -25,7 +24,10 @@ export default function Today() {
     axios
       .get(urls.today, { headers: { Authorization: `Bearer ${user.token}` } })
       .then((response) => {
+        let done = 0;
         setHabits(response.data);
+        response.data.forEach((item) => item.done === true && done++);
+        setProgress((done / response.data.length) * 100);
       })
       .catch((error) =>
         Swal.fire({
@@ -35,11 +37,8 @@ export default function Today() {
           footer: `Error status ${error.response.status}`,
         })
       );
-  }, [user.token]);
+  }, [setProgress, user.token]);
 
-  habits.forEach((item) => item.done === true && done++);
-  setProgress((done / habits.length) * 100);
-  
   function checkHabit(id) {
     axios
       .post(
@@ -55,8 +54,9 @@ export default function Today() {
             headers: { Authorization: `Bearer ${user.token}` },
           })
           .then((response) => {
+            let done = 0;
             setHabits(response.data);
-            habits.forEach((item) => item.done === true && done++);
+            response.data.forEach((item) => item.done === true && done++);
             setProgress((done / response.data.length) * 100);
           });
       })
@@ -85,8 +85,9 @@ export default function Today() {
             headers: { Authorization: `Bearer ${user.token}` },
           })
           .then((response) => {
+            let done = 0;
             setHabits(response.data);
-            habits.forEach((item) => item.done === true && done++);
+            response.data.forEach((item) => item.done === true && done++);
             setProgress((done / response.data.length) * 100);
           });
       })
@@ -105,11 +106,13 @@ export default function Today() {
       <TopBar />
       <Body progress={progress === null || progress === 0 || isNaN(progress)}>
         <header>
-          <p>{text}</p>
+          <p data-identifier="today-infos">{text}</p>
           {progress === null || progress === 0 || isNaN(progress) ? (
             <span>Nenhum hábito concluído ainda</span>
           ) : (
-            <span>{progress.toFixed(0)}% dos hábitos concluídos</span>
+            <span data-identifier="today-infos">
+              {progress.toFixed(0)}% dos hábitos concluídos
+            </span>
           )}
         </header>
         <ul>

@@ -31,10 +31,13 @@ export default function SignUp() {
       .then(() => navigate("/"))
       .catch((error) => {
         Swal.fire({
-          icon: 'error',
-          title: 'Oops...',
-          text: error.response.status===422 ? error.response.data.details[0] : error.response.data.message,
-          footer: `Error status ${error.response.status}`
+          icon: "error",
+          title: "Oops...",
+          text:
+            error.response.status === 422
+              ? error.response.data.details[0]
+              : error.response.data.message,
+          footer: `Error status ${error.response.status}`,
         });
         setDisabled(false);
       });
@@ -45,6 +48,7 @@ export default function SignUp() {
       <Logo />
       <Forms submit={createAccount} isDisabled={disabled}>
         <input
+          data-identifier="input-email"
           name="email"
           type="email"
           placeholder="email"
@@ -53,6 +57,7 @@ export default function SignUp() {
           required
         />
         <input
+          data-identifier="input-password"
           name="password"
           type="password"
           placeholder="senha"
@@ -61,6 +66,7 @@ export default function SignUp() {
           required
         />
         <input
+          data-identifier="input-name"
           name="name"
           placeholder="nome"
           onChange={handleForm}
@@ -68,6 +74,7 @@ export default function SignUp() {
           required
         />
         <input
+          data-identifier="input-photo"
           name="image"
           type="url"
           onChange={handleForm}
@@ -92,7 +99,11 @@ export default function SignUp() {
           )}
         </button>
       </Forms>
-      <LoginLink to="/" colors={colors.lightblue}>
+      <LoginLink
+        to="/"
+        colors={colors.lightblue}
+        data-identifier="back-to-login-action"
+      >
         Já tem uma conta? Faça login!
       </LoginLink>
     </Body>

@@ -61,8 +61,9 @@ export default function Habits() {
   function Habit({ item }) {
     return (
       <HabitContainer>
-        <p>{item.name}</p>
+        <p data-identifier="habit-name">{item.name}</p>
         <ion-icon
+          data-identifier="delete-habit-btn"
           onClick={() => deleteHabit(item.id)}
           name="trash-outline"
         ></ion-icon>
@@ -85,7 +86,12 @@ export default function Habits() {
       <Body>
         <header>
           <p>Meus hábitos</p>
-          <button onClick={() => setAddTask(true)}>+</button>
+          <button
+            data-identifier="create-habit-btn"
+            onClick={() => setAddTask(true)}
+          >
+            +
+          </button>
         </header>
         {addTask && (
           <TaskCreator
@@ -99,7 +105,7 @@ export default function Habits() {
           />
         )}
         {habits.length === 0 ? (
-          <div>
+          <div data-identifier="no-habit-message">
             Você não tem nenhum hábito cadastrado ainda. Adicione um hábito para
             começar a trackear!
           </div>

@@ -9,7 +9,7 @@ export default function TopBar() {
   return (
     <NavBar>
       <h1>TrackIt</h1>
-      <img src={user.image} alt="Foto do usuário" />
+      <img data-identifier="avatar" src={user.image} alt="Foto do usuário" />
     </NavBar>
   );
 }
@@ -38,7 +38,7 @@ const NavBar = styled.nav`
     color: ${colors.white};
   }
 
-  img{
+  img {
     width: 51px;
     height: 51px;
     border-radius: 98.5px;

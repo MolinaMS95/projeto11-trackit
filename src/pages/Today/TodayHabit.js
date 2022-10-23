@@ -4,7 +4,7 @@ import { colors } from "../../constants/colors";
 export default function TodayHabit({ item, checkHabit, uncheckHabit }) {
   return (
     <Habit key={item.id}>
-      <div>
+      <div data-identifier="today-infos">
         <span>{item.name}</span>
         <p>
           Sequência atual:{" "}
@@ -23,8 +23,11 @@ export default function TodayHabit({ item, checkHabit, uncheckHabit }) {
         </p>
       </div>
       <Checkmark
+        data-identifier="done-habit-btn"
         completed={item.done}
-        onClick={() => {item.done ? uncheckHabit(item.id) : checkHabit(item.id)}}
+        onClick={() => {
+          item.done ? uncheckHabit(item.id) : checkHabit(item.id);
+        }}
       >
         <ion-icon name="checkmark-sharp"></ion-icon>
       </Checkmark>

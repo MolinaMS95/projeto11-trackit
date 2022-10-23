@@ -14,7 +14,7 @@ export default function BottomBar() {
   return (
     <Footer>
       <Link to="/habitos">
-        <LetterButton>Hábitos</LetterButton>
+        <LetterButton data-identifier="habit-page-action">Hábitos</LetterButton>
       </Link>
       <TodayButton
         value={progress ? progress : 0}
@@ -46,7 +46,9 @@ export default function BottomBar() {
         </Link>
       </TodayButton>
       <Link to="/historico">
-        <LetterButton>Histórico</LetterButton>
+        <LetterButton data-identifier="historic-page-action">
+          Histórico
+        </LetterButton>
       </Link>
     </Footer>
   );

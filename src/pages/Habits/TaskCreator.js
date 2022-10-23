@@ -56,6 +56,7 @@ export default function TaskCreator(props) {
   return (
     <AddTaskForm onSubmit={saveHabit} isDisabled={disabled}>
       <input
+        data-identifier="input-habit-name"
         placeholder="nome do hábito"
         onChange={(event) => setName(event.target.value)}
         value={name}
@@ -64,8 +65,13 @@ export default function TaskCreator(props) {
       />
       <Weekdays handleDays={handleDays} days={days} disabled={disabled} />
       <ButtonContainer isDisabled={disabled}>
-        <p onClick={() => setAddTask(false)}>Cancelar</p>
-        <button type="submit">
+        <p
+          data-identifier="cancel-habit-create-btn"
+          onClick={() => setAddTask(false)}
+        >
+          Cancelar
+        </p>
+        <button data-identifier="save-habit-create-btn" type="submit">
           {disabled ? (
             <ThreeDots
               height="50"

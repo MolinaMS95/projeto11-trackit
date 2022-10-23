@@ -51,6 +51,7 @@ export default function Login() {
       <Logo />
       <Forms submit={login} isDisabled={disabled}>
         <input
+          data-identifier="input-email"
           type="email"
           name="email"
           onChange={handleForm}
@@ -59,6 +60,7 @@ export default function Login() {
           required
         />
         <input
+          data-identifier="input-password"
           type="password"
           name="password"
           onChange={handleForm}
@@ -66,7 +68,7 @@ export default function Login() {
           disabled={disabled}
           required
         />
-        <button type="submit">
+        <button type="submit" data-identifier="login-btn">
           {disabled ? (
             <ThreeDots
               height="80"
@@ -83,7 +85,11 @@ export default function Login() {
           )}
         </button>
       </Forms>
-      <SignUpLink to="/cadastro" colors={colors.lightblue}>
+      <SignUpLink
+        to="/cadastro"
+        colors={colors.lightblue}
+        data-identifier="sign-up-action"
+      >
         Não tem uma conta? Cadastre-se!
       </SignUpLink>
     </Body>
