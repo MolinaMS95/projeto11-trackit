@@ -2,18 +2,78 @@ import styled from "styled-components";
 import BottomBar from "../../components/BottomBar";
 import TopBar from "../../components/TopBar";
 import { colors } from "../../constants/colors";
+import Calendar from "react-calendar";
+import "react-calendar/dist/Calendar.css";
+import axios from "axios";
+import { urls } from "../../constants/urls";
+import { useContext, useEffect, useState } from "react";
+import { UserContext } from "../../components/UserContext";
+import dayjs from "dayjs";
 
 export default function History() {
+  const { user } = useContext(UserContext);
+  const [history, setHistory] = useState(null);
+  const [days, setDays] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get(urls.history, {
+        headers: { Authorization: `Bearer ${user.token}` },
+      })
+      .then((response) => {
+        setHistory(response.data);
+        const dates = [];
+        for (let i = 0; i < response.data.length; i++) {
+          dates[i] = response.data[i].day;
+        }
+        setDays(dates);
+      });
+  }, [user.token]);
+
+  function checkHistory({ date, view }) {
+    const newDate = dayjs(date).format("DD/MM/YYYY");
+    if (newDate === dayjs().format("DD/MM/YYYY")) {
+      return;
+    }
+    if (days.includes(newDate)) {
+      return checkDone(newDate);
+    }
+  }
+
+  function checkDone(newDate) {
+    let completed = true;
+    const index = days.indexOf(newDate);
+    const habits = history[index].habits;
+    for (let i = 0; i < habits.length; i++) {
+      if (habits[i].done === false) {
+        completed = false;
+      }
+    }
+    if (completed === true) {
+      return "complete";
+    } else {
+      return "incomplete";
+    }
+  }
+
   return (
     <>
       <TopBar />
       <Body>
         <header>
-          <p>Meus hábitos</p>
+          <p>Histórico</p>
         </header>
-        <div>
-          <p>Em breve você poderá ver o histórico dos seus hábitos aqui!</p>
-        </div>
+        <Container>
+          {history === null ? (
+            <div> Carregando </div>
+          ) : (
+            <Calendar
+              locale="pt"
+              calendarType="US"
+              tileClassName={checkHistory}
+            />
+          )}
+        </Container>
       </Body>
       <BottomBar />
     </>
@@ -45,5 +105,22 @@ const Body = styled.main`
   div {
     font-size: 18px;
     color: ${colors.text};
+  }
+`;
+
+const Container = styled.div`
+  .react-calendar {
+    border: none;
+  }
+
+  .complete {
+    background: green;
+    border-radius: 50%;
+    width: 100%;
+  }
+
+  .incomplete {
+    background: red;
+    border-radius: 50%;
   }
 `;
