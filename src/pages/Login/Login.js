@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import Forms from "../../components/Forms";
@@ -17,7 +17,13 @@ export default function Login() {
   });
   const [disabled, setDisabled] = useState(false);
   const navigate = useNavigate();
-  const { setUser } = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
+
+  useEffect(() => {
+    if (user !== null) {
+      navigate("/hoje");
+    }
+  });
 
   function handleForm(event) {
     setForm({ ...form, [event.target.name]: event.target.value });
@@ -30,6 +36,7 @@ export default function Login() {
       .post(urls.login, form)
       .then((response) => {
         setUser(response.data);
+        saveUser(response.data);
         navigate("/hoje");
       })
       .catch((error) => {
@@ -44,6 +51,11 @@ export default function Login() {
         });
         setDisabled(false);
       });
+  }
+
+  function saveUser(object) {
+    const user = JSON.stringify(object);
+    localStorage.setItem("user", user);
   }
 
   return (

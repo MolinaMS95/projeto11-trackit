@@ -14,6 +14,8 @@ export default function History() {
   const { user } = useContext(UserContext);
   const [history, setHistory] = useState(null);
   const [days, setDays] = useState([]);
+  const [showDay, setShowDay] = useState(false);
+  const [pastDay, setPastDay] = useState(null);
 
   useEffect(() => {
     axios
@@ -56,6 +58,26 @@ export default function History() {
     }
   }
 
+  function showHabits(value) {
+    const date = dayjs(value).format("DD/MM/YYYY");
+    const index = days.indexOf(date);
+    if (index !== -1) {
+      setShowDay(true);
+      setPastDay(index);
+    }
+  }
+
+  function HistoryHabits({ habit }) {
+    return (
+      <Habit>
+        <div>{habit.name}</div>
+        <Checkmark completed={habit.done}>
+          <ion-icon name="checkmark-sharp"></ion-icon>
+        </Checkmark>
+      </Habit>
+    );
+  }
+
   return (
     <>
       <TopBar />
@@ -66,12 +88,19 @@ export default function History() {
         <Container>
           {history === null ? (
             <div> Carregando </div>
-          ) : (
+          ) : !showDay ? (
             <Calendar
               locale="pt"
               calendarType="US"
               tileClassName={checkHistory}
+              onClickDay={(value) => showHabits(value)}
             />
+          ) : (
+            <ul>
+              {history[pastDay].habits.map((habit) => (
+                <HistoryHabits habit={habit} key={habit.id} />
+              ))}
+            </ul>
           )}
         </Container>
       </Body>
@@ -123,4 +152,48 @@ const Container = styled.div`
     background: red;
     border-radius: 50%;
   }
+`;
+
+const Habit = styled.li`
+  width: 340px;
+  height: 94px;
+
+  background: ${colors.white};
+  border-radius: 5px;
+
+  padding: 13px;
+  margin-bottom: 10px;
+
+  display: flex;
+  justify-content: space-between;
+
+  div {
+    height: 69px;
+
+    font-size: 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: ${colors.text};
+
+    word-break: break-word;
+  }
+`;
+
+const Checkmark = styled.div`
+  width: 69px;
+  height: 69px;
+
+  background: ${(props) => (props.completed ? "#8FC549" : "#ebebeb")};
+  border: 1px solid #e7e7e7;
+  border-radius: 5px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 50px !important;
+  color: white !important;
 `;

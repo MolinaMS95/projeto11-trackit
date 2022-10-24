@@ -10,7 +10,8 @@ import { useState } from "react";
 import { ProgressContext } from "./components/ProgressContext";
 
 export default function App() {
-  const [user, setUser] = useState(null);
+  const localUser = JSON.parse(localStorage.getItem("user"));
+  const [user, setUser] = useState(localUser);
   const [progress, setProgress] = useState(null);
 
   return (

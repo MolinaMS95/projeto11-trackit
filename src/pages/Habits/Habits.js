@@ -179,6 +179,8 @@ const HabitContainer = styled.div`
 
   position: relative;
 
+  word-break: break-word;
+
   div {
     display: flex;
     gap: 5px;

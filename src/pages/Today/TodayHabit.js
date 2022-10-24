@@ -55,6 +55,8 @@ const Habit = styled.li`
     flex-direction: column;
 
     color: ${colors.text};
+
+    word-break: break-word;
   }
 
   span {
